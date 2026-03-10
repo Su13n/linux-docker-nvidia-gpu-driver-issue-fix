@@ -1,6 +1,6 @@
-# Immich + Docker GPU Fix (`could not select device driver "nvidia"`)
+# Docker GPU Fix (`could not select device driver "nvidia"`)
 
-If your Immich containers fail to start with errors like:
+If your containers fail to start with errors like:
 
 ```text
 could not select device driver "nvidia" with capabilities: [[gpu]]
@@ -12,7 +12,7 @@ or
 could not select device driver "nvidia" with capabilities: [[gpu compute video]]
 ```
 
-this is usually a Docker daemon/runtime issue, not an Immich image issue.
+this is usually a Docker daemon/runtime issue (and in my case, contrary to what I initially assumed, an issue with the container I tried to run, i.e., [Immich](https://github.com/immich-app/immich "Immich Repo")).
 
 ## What was actually wrong
 
@@ -43,7 +43,7 @@ sudo nvidia-ctk runtime configure --runtime=docker
 sudo systemctl restart docker
 ```
 
-4. Verify Docker can use the GPU before starting Immich:
+4. Verify Docker can use the GPU before starting your container:
 
 ```bash
 docker --context default run --rm --gpus all nvidia/cuda:12.4.1-base-ubuntu22.04 nvidia-smi
@@ -51,7 +51,7 @@ docker --context default run --rm --gpus all nvidia/cuda:12.4.1-base-ubuntu22.04
 
 If this command works, GPU passthrough is fixed.
 
-5. Start Immich:
+5. Start:
 
 ```bash
 docker --context default compose up -d
@@ -81,4 +81,5 @@ nvidia-smi
 ## Notes
 
 - If you are on Docker Desktop Linux, GPU support may not behave like native Docker Engine. Use the native daemon (`default` context) for NVIDIA workloads.
-- Fix Docker GPU access first, then troubleshoot Immich-specific settings.
+- Including `--context default` every single time is not necessary once you've set it.
+- Tested on CachyOS, Nvidia Driver 590.48.01, CUDA 13.1 using the nvidia-container-toolkit 1.18.2-1 from the AUR.
