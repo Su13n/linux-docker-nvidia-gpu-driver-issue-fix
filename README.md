@@ -43,10 +43,10 @@ sudo nvidia-ctk runtime configure --runtime=docker
 sudo systemctl restart docker
 ```
 
-4. Verify Docker can use the GPU before starting your container:
+4. Verify Docker can use the GPU before starting Immich (replace `<cuda-tag>` with a CUDA tag available for your setup, for example `12.4.1`):
 
 ```bash
-docker --context default run --rm --gpus all nvidia/cuda:12.4.1-base-ubuntu22.04 nvidia-smi
+docker --context default run --rm --gpus all nvidia/cuda:<cuda-tag>-base-ubuntu22.04 nvidia-smi
 ```
 
 If this command works, GPU passthrough is fixed.
